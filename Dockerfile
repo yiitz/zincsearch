@@ -2,12 +2,12 @@
 ############################
 # STEP 1 build web dist
 ############################
-FROM node:18.18.2-slim as webBuilder
+FROM node:16.18.1-slim as webBuilder
 WORKDIR /web
 COPY ./web /web/
 
-RUN npm install
-RUN npm run build
+RUN npm install --registry=https://registry.npmmirror.com --verbose
+RUN npm run build --verbose
 
 ############################
 # STEP 2 build executable binary
@@ -46,6 +46,7 @@ COPY --from=webBuilder /web/dist web/dist
 
 # Fetch dependencies.
 # Using go get.
+ENV GOPROXY=https://goproxy.cn,direct
 RUN go mod tidy
 
 ENV VERSION=$VERSION
